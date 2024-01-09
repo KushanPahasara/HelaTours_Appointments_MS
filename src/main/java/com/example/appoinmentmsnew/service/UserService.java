@@ -6,8 +6,12 @@ import com.example.appoinmentmsnew.repo.UserRepo;
 import com.example.appoinmentmsnew.util.VarList;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Service
@@ -35,6 +39,21 @@ public class UserService {
             return VarList.RSP_SUCCESS;
         }else{
             return VarList.RSP_NO_DATA_FOUND;
+        }
+    }
+
+    public List<UserDTO> getAllUsers(){
+        List<User> userList = userRepo.findAll();
+        return modelMapper.map(userList,new TypeToken<ArrayList<UserDTO>>(){
+        }.getType());
+    }
+
+    public UserDTO searchUser(int userId){
+        if(userRepo.existsById(userId)){
+           User user = userRepo.findById(userId).orElse(null);
+           return modelMapper.map(user,UserDTO.class);
+        }else{
+            return null;
         }
     }
 }
